@@ -8,11 +8,11 @@ Web: https://yennashyamprasadreddy.com
 #include<stdlib.h>
 #include<string.h>
 
-struct Image  
+struct Image_File 
 {
     char header[4];
-    int width;
-    int height;
+    int width_of_image;
+    int height_of_image;
     char data[10];
 };
 
@@ -23,11 +23,11 @@ void stack_operation(){
     }
 }
 
-int ProcessImage(char* filename){
+int ProcessImage_File(char* filename){
     FILE *fp;
-    struct Image img;
+    struct Image_File img;
 
-    fp = fopen(filename,"r");            //Statement   1
+    fp = fopen(filename,"r");            //In this function processImage image will be processed.
 
     if(fp == NULL)
     {
@@ -38,41 +38,38 @@ int ProcessImage(char* filename){
     while(fread(&img,sizeof(img),1,fp)>0)
     {
         
-            printf("\n\tHeader\twidth\theight\tdata\t\r\n");
+            printf("\n\tHeader\twidth_of_image\theight\tdata\t\r\n");
 
-            printf("\n\t%s\t%d\t%d\t%s\r\n",img.header,img.width,img.height,img.data);
-            //integer overflow 0x7FFFFFFF+1=0
-            //0x7FFFFFFF+2 = 1
-            //will cause very large/small memory allocation.
-            int size1 = img.width + img.height;
+            printf("\n\t%s\t%d\t%d\t%s\r\n",img.header,img.width_of_image,img.height_of_image;,img.data);
+            //integer overflow 0x7FFFFFFF+1=0. Here we get crash for integer overflow
+
+            int size1 = img.width_of_image + img.height_of_image;
             char* buff1=(char*)malloc(size1);
 
-            //heap buffer overflow vulnerability 
+            //This causes heap buffer overflow vulnerability 
             memcpy(buff1,img.data,sizeof(img.data));
             free(buff1);
 
-            //double free   
+            //This causes double free   
             if (size1/2==0){
                 free(buff1);
             }
             else{
-                //use after free
+                //this will cause use after free
                 if(size1/3 == 0){
                     buff1[0]='a';
                 }
             }
             //integer underflow 0-1=-1
-            //negative so will cause very large memory allocation
-            int size2 = img.width - img.height+100;
-            //printf("Size1:%d",size1);
+            //negative so will cause very large memory allocation. Here we may get integer underflow crash.
+            int size2 = img.width_of_image - img.height_of_image;+100;
             char* buff2=(char*)malloc(size2);
 
-            //heap buffer overflow
+            //Here we may get heap buffer overflow
             memcpy(buff2,img.data,sizeof(img.data));
 
-            //divide by zero
-            int size3= img.width/img.height;
-            //printf("Size2:%d",size3);
+            //here we might get divide by zero
+            int size3= img.width_of_image/img.height_of_image;
 
             char buff3[10];
             char* buff4 =(char*)malloc(size3);
@@ -93,7 +90,7 @@ int ProcessImage(char* filename){
             else{
                 free(buff4);
             }
-            int size4 = img.width * img.height;
+            int size4 = img.width_of_image * img.height_of_image;
             if(size4/2==0){
                 //stack exhaustion here
                 stack_operation();
@@ -115,5 +112,5 @@ int ProcessImage(char* filename){
 
 int main(int argc,char **argv)
 {
-    ProcessImage(argv[1]);
+    ProcessImage_File(argv[1]);
 }
